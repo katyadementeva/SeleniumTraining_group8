@@ -1,24 +1,18 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 
 namespace TrainingProject1
 {
-    [TestFixture]
-    public class LoginTest
+    [TestFixture(Browser.Chrome, Category = "Chrome")]
+    [TestFixture(Browser.IE, Category = "IE")]
+    [TestFixture(Browser.FirefoxNew, Category ="FirefoxNew")]
+    [TestFixture(Browser.FirefoxOld, Category = "FirefoxOld")]
+    [TestFixture(Browser.FirefoxNightly, Category = "FirefoNightly")]
+    public class LoginTest:BaseTest
     {
-        IWebDriver driver;
-        WebDriverWait wait;
-
-        [SetUp]
-        public void StartTest()
-        {
-            driver = new ChromeDriver();
-            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
-        }
+        public LoginTest(Browser browser) : base(browser) { }
 
         [Test]
         public void Login()
@@ -31,13 +25,6 @@ namespace TrainingProject1
             driver.FindElement(By.CssSelector("button[name=login]")).Click();
 
             wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.notice.success")));
-        }
-
-        [TearDown]
-        public void StopTest()
-        {
-            driver.Quit();
-            driver.Dispose();
-        }
+        }        
     }    
 }
