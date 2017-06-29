@@ -14,6 +14,7 @@ namespace TrainingProject1
         [Test]
         public void TestMenu()
         {
+            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
             Login("admin", "admin");
             wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.notice.success")));
             IWebElement menu = driver.FindElement(By.CssSelector("ul#box-apps-menu"));

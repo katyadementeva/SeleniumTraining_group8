@@ -65,7 +65,6 @@ namespace TrainingProject1
             }
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
             driver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(3);
-            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
 
         }
 
