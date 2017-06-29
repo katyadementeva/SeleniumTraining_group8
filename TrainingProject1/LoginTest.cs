@@ -15,15 +15,9 @@ namespace TrainingProject1
         public LoginTest(Browser browser) : base(browser) { }
 
         [Test]
-        public void Login()
+        public void TestLogin()
         {
-            driver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(3);
-            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
-
-            driver.FindElement(By.CssSelector("input[name=username]")).SendKeys("admin");
-            driver.FindElement(By.CssSelector("input[name=password]")).SendKeys("admin");
-            driver.FindElement(By.CssSelector("button[name=login]")).Click();
-
+            Login("admin", "admin");
             wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.notice.success")));
         }        
     }    

@@ -64,6 +64,9 @@ namespace TrainingProject1
                     break;                    
             }
             wait = new WebDriverWait(driver, TimeSpan.FromSeconds(30));
+            driver.Manage().Timeouts().PageLoad = TimeSpan.FromMinutes(3);
+            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
+
         }
 
         [TearDown]
@@ -72,5 +75,13 @@ namespace TrainingProject1
             driver.Quit();
             driver.Dispose();
         }
+
+        public void Login(string name, string password)
+        {            
+            driver.FindElement(By.CssSelector("input[name=username]")).SendKeys(name);
+            driver.FindElement(By.CssSelector("input[name=password]")).SendKeys(password);
+            driver.FindElement(By.CssSelector("button[name=login]")).Click();           
+        }
+
     }
 }
