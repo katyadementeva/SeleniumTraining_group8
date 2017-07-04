@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace TrainingProject1
 {
     [TestFixture(Category = "Chrome")]
-    public class CountryTest : BaseTest
+    public class CountryAndZoneTest : BaseTest
     {
-        public CountryTest() : base(Browser.Chrome) { }
+        public CountryAndZoneTest() : base(Browser.Chrome) { }
 
         [Test]
         public void TestCountry()
@@ -29,16 +29,16 @@ namespace TrainingProject1
                 if (prevCountry == "")
                     prevCountry = country;
                 else
-                    Assert.True(country.CompareTo(prevCountry)>0, string.Format("Country {0} is shown before country {1}", country, prevCountry));
-                    
+                    Assert.True(country.CompareTo(prevCountry) > 0, string.Format("Country {0} is shown before country {1}", country, prevCountry));
+
                 int zoneNum = int.Parse(countryRow.FindElements(By.CssSelector("td"))[zonesIndex].Text);
                 if (zoneNum > 0)
                     countryWithZonesHrefs.Add(nameCell.FindElement(By.CssSelector("a")).GetAttribute("href"));
                 prevCountry = country;
                 rowIndex++;
             }
-            
-            foreach(string href in countryWithZonesHrefs)
+
+            foreach (string href in countryWithZonesHrefs)
             {
                 driver.Navigate().GoToUrl(href);
                 Dictionary<string, int> zonesTableHeaders = GetTableHeaders("table#table-zones");
@@ -60,6 +60,46 @@ namespace TrainingProject1
                     }
                 }
                 driver.Navigate().Back();
+            }
+        }
+        [Test]
+        public void TestGeoZones()
+        {
+            LoginToAdmin("admin", "admin");
+            Dictionary<string, string> menuItems = GetMenuDictionary("ul#box-apps-menu li[id='app-']>a");
+            ClickMenuByName(menuItems, "Geo Zones");
+            Dictionary<string, int> countryTableHeaders = GetTableHeaders("form[name=\"geo_zones_form\"] table");
+            int nameIndex = countryTableHeaders["Name"];
+            IReadOnlyCollection<IWebElement> countryRows = driver.FindElements(By.CssSelector("form[name=\"geo_zones_form\"] table tr.row"));
+            List<string> countryHrefs = new List<string>();
+            foreach (IWebElement countryRow in countryRows)
+            {
+                IWebElement nameCell = countryRow.FindElements(By.CssSelector("td"))[nameIndex];
+                countryHrefs.Add(nameCell.FindElement(By.CssSelector("a")).GetAttribute("href"));
+            }
+
+            foreach (string href in countryHrefs)
+            {
+                driver.Navigate().GoToUrl(href);
+                Dictionary<string, int> zonesTableHeaders = GetTableHeaders("table#table-zones");
+                int zoneNameIndex = zonesTableHeaders["Zone"];
+                List<string> zonesList = new List<string>();
+                IReadOnlyCollection<IWebElement> zoneRows = driver.FindElements(By.CssSelector("table#table-zones tr:not(.header)"));
+                string prevZone = "";
+                foreach (IWebElement zoneRow in zoneRows)
+                {
+                    if (zoneRow.FindElements(By.CssSelector("a#add_zone")).Count == 0)
+                    {
+                        IWebElement zoneNameCell = zoneRow.FindElements(By.CssSelector("td"))[zoneNameIndex];
+                        string zone = zoneNameCell.FindElement(By.CssSelector("option[selected]")).Text;
+                        if (prevZone == "")
+                            prevZone = zone;
+                        else
+                            Assert.True(zone.CompareTo(prevZone) > 0, string.Format("Zone {0} is shown before zone {1} for this href '{2}'", zone, prevZone, href));
+                        prevZone = zone;
+                    }
+                }
+
             }
         }
     }
