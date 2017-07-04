@@ -7,6 +7,8 @@ using OpenQA.Selenium.Support.UI;
 using System;
 using OpenQA.Selenium.Remote;
 using System.IO;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 namespace TrainingProject1
 {
@@ -75,12 +77,47 @@ namespace TrainingProject1
             driver.Dispose();
         }
 
-        public void Login(string name, string password)
-        {            
+        internal void LoginToAdmin(string name, string password)
+        {
+            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
             driver.FindElement(By.CssSelector("input[name=username]")).SendKeys(name);
             driver.FindElement(By.CssSelector("input[name=password]")).SendKeys(password);
-            driver.FindElement(By.CssSelector("button[name=login]")).Click();           
+            driver.FindElement(By.CssSelector("button[name=login]")).Click();
+            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.notice.success")));
         }
 
+        internal Dictionary<string, string> GetMenuDictionary(string menuCssSelector)
+        {
+            ReadOnlyCollection<IWebElement> menuItemElements = driver.FindElements(By.CssSelector(menuCssSelector));
+            Dictionary<string, string> menuItems = new Dictionary<string, string>();
+            foreach (IWebElement menuItemElement in menuItemElements)
+            {
+                menuItems.Add(menuItemElement.Text, menuItemElement.GetAttribute("href"));
+            }
+            return menuItems;
+        }
+
+        internal void ClickMenuByName(Dictionary<string, string> menuItems, string menuItemName)
+        {
+            driver.FindElement(By.CssSelector("[href=\"" + menuItems[menuItemName] + "\"]")).Click();
+        }
+
+        internal Dictionary<string, int> GetTableHeaders(string tableCssSelector)
+        {
+            ReadOnlyCollection<IWebElement> tableHeaderElments = driver.FindElements(By.CssSelector(tableCssSelector + " tr.header th"));
+            int i = 0;
+            Dictionary<string, int> headers = new Dictionary<string, int>();
+
+            foreach (IWebElement tableHeaderElement in tableHeaderElments)
+            {
+                string text = tableHeaderElement.Text;
+                if (text.Length > 0)
+                {
+                    headers.Add(text, i);
+                }
+                i++;
+            }
+            return headers;
+        }
     }
 }

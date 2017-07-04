@@ -73,6 +73,7 @@
     <Compile Include="LoginTest.cs" />
     <Compile Include="MenuTest.cs" />
     <Compile Include="ProductsTest.cs" />
+    <Compile Include="CountryTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

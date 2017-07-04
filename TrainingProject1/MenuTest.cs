@@ -1,8 +1,8 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
-using System.Collections.ObjectModel;
-using System.Collections;
+using System.Collections.Generic;
+
 
 namespace TrainingProject1
 {
@@ -14,32 +14,20 @@ namespace TrainingProject1
         [Test]
         public void TestMenu()
         {
-            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
-            Login("admin", "admin");
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.notice.success")));
-            IWebElement menu = driver.FindElement(By.CssSelector("ul#box-apps-menu"));
-            ReadOnlyCollection<IWebElement> menuItems = menu.FindElements(By.CssSelector("li[id='app-'] a"));
-            ArrayList menuItemHrefs = new ArrayList();
-            foreach (IWebElement menuItem in menuItems)
+            LoginToAdmin("admin", "admin");
+            Dictionary<string, string> menuItems = GetMenuDictionary("ul#box-apps-menu li[id='app-']>a");
+            foreach (string menuItemName in menuItems.Keys)
             {
-                menuItemHrefs.Add(menuItem.GetAttribute("href"));
-            }
-            foreach (string href in menuItemHrefs)
-            {
-                driver.FindElement(By.CssSelector("[href=\"" + href + "\"]")).Click();
+                ClickMenuByName(menuItems, menuItemName);
                 wait.Until(ExpectedConditions.ElementExists(By.CssSelector("h1")));
-                ReadOnlyCollection<IWebElement> subMenuItems = driver.FindElements(By.CssSelector("li.selected ul a"));
-                ArrayList subMenuItemHrefs = new ArrayList();
-                foreach (IWebElement subMenuItem in subMenuItems)
+                Dictionary <string, string> subMenuItems = GetMenuDictionary("li.selected ul a");
+                foreach (string subMenuItemName in subMenuItems.Keys)
                 {
-                    subMenuItemHrefs.Add(subMenuItem.GetAttribute("href"));
-                }
-                foreach (string hrefSub in subMenuItemHrefs)
-                {
-                    driver.FindElement(By.CssSelector("[href=\"" + hrefSub + "\"]")).Click();
+                    ClickMenuByName(subMenuItems, subMenuItemName);
                     wait.Until(ExpectedConditions.ElementExists(By.CssSelector("h1")));
                 }
             }
-        }
+        }       
+
     }    
 }

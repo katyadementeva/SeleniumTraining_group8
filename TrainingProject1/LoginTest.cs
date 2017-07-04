@@ -17,9 +17,7 @@ namespace TrainingProject1
         [Test]
         public void TestLogin()
         {
-            driver.Navigate().GoToUrl("http://localhost:8081/litecart/admin");
-            Login("admin", "admin");
-            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.notice.success")));
+            LoginToAdmin("admin", "admin");            
         }        
     }    
 }
