@@ -9,7 +9,7 @@ namespace TrainingProject1
     [TestFixture(Browser.IE, Category = "IE")]
     [TestFixture(Browser.FirefoxNew, Category ="FirefoxNew")]
     [TestFixture(Browser.FirefoxOld, Category = "FirefoxOld")]
-    [TestFixture(Browser.FirefoxNightly, Category = "FirefoNightly")]
+    [TestFixture(Browser.FirefoxNightly, Category = "FirefoxNightly")]
     public class LoginTest:BaseTest
     {
         public LoginTest(Browser browser) : base(browser) { }
