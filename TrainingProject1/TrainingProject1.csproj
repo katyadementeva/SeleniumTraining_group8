@@ -74,6 +74,7 @@
     <Compile Include="MenuTest.cs" />
     <Compile Include="ProductsTest.cs" />
     <Compile Include="CountryAndZoneTest.cs" />
+    <Compile Include="UserTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
