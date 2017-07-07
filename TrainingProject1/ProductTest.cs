@@ -4,6 +4,10 @@ using OpenQA.Selenium;
 using System.Collections.Generic;
 using OpenQA.Selenium.Support.UI;
 using System.Drawing;
+using System.IO;
+using System.Reflection;
+using OpenQA.Selenium.Interactions;
+using System;
 
 namespace TrainingProject1
 {
@@ -99,6 +103,59 @@ namespace TrainingProject1
                 Assert.Inconclusive("Test can't detect if action price is bold in browser " + browser.ToString() + ", please check manually " + driver.Url + " (" + actionPriceBold + ")");
             Size actionPriceSize = actionPriceElement.Size;
             Assert.True(regularPriceSize.Height < actionPriceSize.Height && regularPriceSize.Width < actionPriceSize.Width, "Size of action price smaller than size of regular price");
+        }
+
+        [Test]
+        public void TestProductCreation()
+        {
+            
+            LoginToAdmin("admin", "admin");
+            Dictionary<string, string> menuItems = GetMenuDictionary("ul#box-apps-menu li[id='app-']>a");
+            ClickMenuByName(menuItems, "Catalog");
+            driver.FindElement(By.CssSelector("a.button[href=\"http://localhost:8081/litecart/admin/?category_id=0&app=catalog&doc=edit_product\"]")).Click();
+            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("a[href=\"#tab-general\"]")));
+            driver.FindElements(By.CssSelector("input[type=radio]"))[0].Click();
+            Random r = new Random();
+            int i = r.Next(0, 100);
+            string productName = string.Format("Duck_{0}", i);
+            driver.FindElement(By.CssSelector("input[name=\"name[en]\"]")).SendKeys(productName);
+            driver.FindElement(By.CssSelector("input[name=code]")).SendKeys(productName);
+            driver.FindElement(By.CssSelector("input[name=quantity]")).SendKeys(i.ToString());
+            driver.FindElement(By.CssSelector("input[name=quantity]")).Clear();
+            string imageFile = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) + "\\slider-thumb.png";
+            Assert.True(File.Exists(imageFile));
+            driver.FindElement(By.CssSelector("input[name=\"new_images[]\"]")).SendKeys(imageFile);
+            string dateNow = DateTime.Now.Date.ToString("dd/MM/yyyy");
+            driver.FindElement(By.CssSelector("input[name=\"date_valid_from\"]")).SendKeys(Keys.Home + dateNow);
+            driver.FindElement(By.CssSelector("a[href=\"#tab-prices\"]")).Click();
+            wait.Until(ExpectedConditions.ElementIsVisible(By.CssSelector("input[name=purchase_price]")));
+            driver.FindElement(By.CssSelector("input[name=purchase_price]")).Clear();
+            driver.FindElement(By.CssSelector("input[name=purchase_price]")).SendKeys("10");
+            SelectElement currencySelect = new SelectElement(driver.FindElement(By.CssSelector("select[name=purchase_price_currency_code]")));
+            currencySelect.SelectByValue("EUR");
+            driver.FindElement(By.CssSelector("input[name=\"prices[USD]\"]")).SendKeys("14");
+            driver.FindElement(By.CssSelector("input[name=\"prices[EUR]\"]")).SendKeys("12");
+            driver.FindElement(By.CssSelector("button[name=save]")).Click();
+
+            ClickMenuByName(menuItems, "Catalog");
+            wait.Until(ExpectedConditions.ElementExists(By.CssSelector("form[name=catalog_form]")));
+
+            Dictionary<string, int> catalogTableHeaders = GetTableHeaders("form[name=catalog_form]");
+            int nameIndex = catalogTableHeaders["Name"];
+            bool isCreatedProductFound = false;
+            IReadOnlyCollection<IWebElement> productRows = driver.FindElements(By.CssSelector("form[name=\"catalog_form\"] table tr.row"));
+            foreach (IWebElement productRow in productRows)
+            {
+                IWebElement nameCell = productRow.FindElements(By.CssSelector("td"))[nameIndex];
+                string curProduct = nameCell.Text;
+                if (curProduct == productName)
+                {
+                    isCreatedProductFound = true;
+                    break;
+                }                    
+            }
+            Assert.True(isCreatedProductFound, string.Format("Created product {0} is not found in catalog", productName));
+
         }
     }
 }
