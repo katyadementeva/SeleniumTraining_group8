@@ -3,6 +3,7 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace TrainingProject1
@@ -113,15 +114,15 @@ namespace TrainingProject1
             ClickMenuByName(menuItems, "Countries");
             Dictionary<string, int> countryTableHeaders = GetTableHeaders("form[name=\"countries_form\"] table");
             int nameIndex = countryTableHeaders["Name"];
-            IReadOnlyCollection<IWebElement> countryRows = driver.FindElements(By.CssSelector("form[name=\"countries_form\"] table tr.row"));
+            ReadOnlyCollection<IWebElement> countryRows = driver.FindElements(By.CssSelector("form[name=\"countries_form\"] table tr.row"));
             Random r = new Random();
             int countryIndex = r.Next(countryRows.Count - 1);
-            countryRows.ElementAt(countryIndex).FindElements(By.CssSelector("td"))[nameIndex].FindElement(By.CssSelector("a")).Click();
-            IReadOnlyCollection<IWebElement> externalLinks = driver.FindElements(By.CssSelector("a[target=\"_blank\"]"));
+            countryRows[countryIndex].FindElements(By.CssSelector("td"))[nameIndex].FindElement(By.CssSelector("a")).Click();
+            ReadOnlyCollection<IWebElement> externalLinks = driver.FindElements(By.CssSelector("a[target=\"_blank\"]"));
             foreach (IWebElement externalLink in externalLinks)
             {
                 string originalWindow = driver.CurrentWindowHandle;
-                IReadOnlyCollection<string> existingWindows = driver.WindowHandles;
+                ReadOnlyCollection<string> existingWindows = driver.WindowHandles;
                 externalLink.Click();
                 wait.Until(d=> d.WindowHandles.Count>existingWindows.Count);
                 string newWindow = AnyWindowOtherThan(existingWindows);
@@ -133,9 +134,9 @@ namespace TrainingProject1
             }
         }
 
-        private string AnyWindowOtherThan(IReadOnlyCollection<string> oldWindows)
+        private string AnyWindowOtherThan(ReadOnlyCollection<string> oldWindows)
         {
-            IReadOnlyCollection<string> newWindows = driver.WindowHandles;
+            ReadOnlyCollection<string> newWindows = driver.WindowHandles;
             IEnumerable<string> createdWindows = newWindows.Except(oldWindows);
             if (createdWindows.Count() > 0)
                 return createdWindows.ElementAt(0);
