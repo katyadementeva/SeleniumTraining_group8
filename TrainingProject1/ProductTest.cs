@@ -158,6 +158,55 @@ namespace TrainingProject1
         }
 
         [Test]
+        public void TestProductNoErrorsInLog()
+        {
+            LoginToAdmin("admin", "admin");
+            Dictionary<string, string> menuItems = GetMenuDictionary("ul#box-apps-menu li[id='app-']>a");
+            ClickMenuByName(menuItems, "Catalog");
+            IWebElement catalogTable = driver.FindElement(By.CssSelector("form[name=catalog_form] table"));
+            while (catalogTable.FindElements(By.CssSelector("tr.row i.fa-folder")).Count>0)
+            {
+                //expand catalogs
+                ReadOnlyCollection<IWebElement> rows = catalogTable.FindElements(By.CssSelector("tr.row"));
+                int i = 0;
+                while (i < rows.Count)
+                {
+                    if (rows[i].FindElements(By.CssSelector("i.fa-folder")).Count > 0)
+                    {
+                        rows[i].FindElement(By.CssSelector("a")).Click();
+                        catalogTable = driver.FindElement(By.CssSelector("form[name=catalog_form] table"));
+                        rows = catalogTable.FindElements(By.CssSelector("tr.row"));
+                        i = 0;
+                    }
+                    i++;
+                }
+            }
+            ReadOnlyCollection<IWebElement> productrows = catalogTable.FindElements(By.CssSelector("tr.row"));
+            List<string> productHrefs = new List<string>();
+            foreach (IWebElement productrow in productrows)
+            {
+                if (productrow.FindElements(By.CssSelector("i.fa-folder-open")).Count == 0)
+                    productHrefs.Add(productrow.FindElement(By.CssSelector("a")).GetAttribute("href"));
+            }
+            foreach (string productHref in productHrefs)
+            {
+                IWebElement productElement = driver.FindElement(By.CssSelector("a[href = \"" + productHref + "\"]"));
+                driver.Navigate().GoToUrl(productHref);
+                wait.Until(ExpectedConditions.ElementExists(By.CssSelector("div.tabs")));
+                string logMessage = string.Format("For product href {0} browser has log entries:\n", productHref);
+                foreach (LogEntry l in driver.Manage().Logs.GetLog("browser"))
+                {
+                    Console.WriteLine(l);
+                    logMessage += l + "\n";
+                }
+                Assert.True(driver.Manage().Logs.GetLog("browser").Count == 0, logMessage);
+                driver.Navigate().Back();
+                wait.Until(ExpectedConditions.ElementExists(By.CssSelector("form[name=catalog_form]")));
+            }
+
+        }
+
+        [Test]
         public void TestProductInCart()
         {
             driver.Navigate().GoToUrl("http://localhost:8081/litecart");
