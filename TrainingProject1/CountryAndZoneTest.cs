@@ -1,15 +1,15 @@
 ﻿using NUnit.Framework;
 using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using TrainingProject1.app;
 
 namespace TrainingProject1
 {
     [TestFixture(Category = "Chrome")]
-    public class CountryAndZoneTest : BaseTest
+    public class CountryAndZoneTest : OldBaseTest
     {
         public CountryAndZoneTest() : base(Browser.Chrome) { }
 

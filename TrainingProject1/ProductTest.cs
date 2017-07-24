@@ -6,8 +6,8 @@ using OpenQA.Selenium.Support.UI;
 using System.Drawing;
 using System.IO;
 using System.Reflection;
-using OpenQA.Selenium.Interactions;
 using System;
+using TrainingProject1.app;
 
 namespace TrainingProject1
 {
@@ -16,7 +16,7 @@ namespace TrainingProject1
     [TestFixture(Browser.FirefoxNew, Category = "FirefoxNew")]
     [TestFixture(Browser.FirefoxOld, Category = "FirefoxOld")]
     [TestFixture(Browser.FirefoxNightly, Category = "FirefoxNightly")]
-    public class ProductTest : BaseTest
+    public class ProductTest : OldBaseTest
     {
         public ProductTest(Browser browser) : base(browser) { }
 
@@ -206,32 +206,6 @@ namespace TrainingProject1
 
         }
 
-        [Test]
-        public void TestProductInCart()
-        {
-            driver.Navigate().GoToUrl("http://localhost:8081/litecart");
-            for (int i = 0; i < 3; i++)
-            {
-                driver.FindElements(By.CssSelector("div#box-most-popular li.product"))[0].FindElement(By.CssSelector("a")).Click();
-                int currentCount = int.Parse(driver.FindElement(By.CssSelector("span.quantity")).Text);
-                wait.Until(ExpectedConditions.ElementExists(By.CssSelector("button[name=\"add_cart_product\"]")));
-                if (driver.FindElements(By.CssSelector("select[name=\"options[Size]\"]")).Count>0)
-                {
-                    SelectElement sizeSelect = new SelectElement (driver.FindElement(By.CssSelector("select[name=\"options[Size]\"]")));
-                    sizeSelect.SelectByIndex(1);
-                }
-                driver.FindElement(By.CssSelector("button[name=\"add_cart_product\"]")).Click();
-                wait.Until((d) => int.Parse(driver.FindElement(By.CssSelector("span.quantity")).Text) > currentCount);
-                driver.Navigate().Back();
-            }
-            driver.FindElement(By.CssSelector("div[id=cart] a.link")).Click();
-            while (driver.FindElements(By.CssSelector("li.item")).Count>0)
-            {
-                IWebElement removeButton = wait.Until(ExpectedConditions.ElementToBeClickable(By.CssSelector("button[name=\"remove_cart_item\"]")));
-                IWebElement cartGrid = driver.FindElement(By.CssSelector("div[id=box-checkout-summary] table"));
-                removeButton.Click();
-                wait.Until(ExpectedConditions.StalenessOf(cartGrid));
-            }
-        }
+        
     }
 }

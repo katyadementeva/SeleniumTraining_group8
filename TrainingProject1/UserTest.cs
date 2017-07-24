@@ -2,11 +2,12 @@
 using OpenQA.Selenium;
 using OpenQA.Selenium.Support.UI;
 using System;
+using TrainingProject1.app;
 
 namespace TrainingProject1
 {
     [TestFixture(Browser.Chrome, Category = "Chrome")]
-    public class UserTest : BaseTest
+    public class UserTest : OldBaseTest
     {
         public UserTest(Browser browser) : base(browser) { }
 

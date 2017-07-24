@@ -2,12 +2,12 @@
 using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium;
 using System.Collections.Generic;
-
+using TrainingProject1.app;
 
 namespace TrainingProject1
 {
     [TestFixture(Category = "Chrome")]
-    public class MenuTest : BaseTest
+    public class MenuTest : OldBaseTest
     {
         public MenuTest() : base(Browser.Chrome) { }
 

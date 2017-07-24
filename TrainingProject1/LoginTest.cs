@@ -1,7 +1,5 @@
-﻿using System;
-using NUnit.Framework;
-using OpenQA.Selenium;
-using OpenQA.Selenium.Support.UI;
+﻿using NUnit.Framework;
+using TrainingProject1.app;
 
 namespace TrainingProject1
 {
@@ -10,7 +8,7 @@ namespace TrainingProject1
     [TestFixture(Browser.FirefoxNew, Category ="FirefoxNew")]
     [TestFixture(Browser.FirefoxOld, Category = "FirefoxOld")]
     [TestFixture(Browser.FirefoxNightly, Category = "FirefoxNightly")]
-    public class LoginTest:BaseTest
+    public class LoginTest:OldBaseTest
     {
         public LoginTest(Browser browser) : base(browser) { }
 

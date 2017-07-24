@@ -11,25 +11,18 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
+using TrainingProject1.app;
 
 namespace TrainingProject1
-{
-    public enum Browser
-    {
-        IE, 
-        Chrome,
-        FirefoxNew,
-        FirefoxOld, 
-        FirefoxNightly
-    }
+{ 
 
-    public abstract class BaseTest
+    public abstract class OldBaseTest
     {
         internal Browser browser;
         internal IWebDriver driver;
         internal WebDriverWait wait;
 
-        public BaseTest(Browser nBrowser)
+        public OldBaseTest(Browser nBrowser)
         {
             browser = nBrowser;
         }
